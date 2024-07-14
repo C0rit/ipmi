@@ -1,52 +1,87 @@
-// circulos que al tocarlos se hacen mas y mas
-//Alumna: Cory misha matorra viera
-//legajo: 120341/8
-//comision 2
-//Estado: para recuperatorio, no pude llegar a hacerlo totalmente por el tiempo y quisiera ir para recuperatorio. Asi que entrego esto para poder ir
+//Alumnx: Cory misha matorra viera
+//Legajo: 12341/8 
+//Comision 2
+//Recuperatorio del Tp3
+//No pude hacer el video, se me desconfiguro toda la computadora (No se que se le metio) y tuve que hacerla por una prestada(Cualquier duda, tengo los videos donde muestro como se desconfiguro la compu de un momento a otro)
 
 
-float[] circleX;
-float[] circleY;
-float[] circleRadius;
-int numCircles = 10;
+
+
+PImage img;
+color circleColor = color(255, 0, 0); 
+float zoom = 1.0; 
+float centerX, centerY;
 
 void setup() {
-  size(800, 600);
-  background(255);
+  size(800, 400);
+  img = loadImageWithPath("F_51.jpg");
+  background(127, 255, 127); 
   noFill();
-  stroke(0);
-  
-  
-  circleX = new float[numCircles];
-  circleY = new float[numCircles];
-  circleRadius = new float[numCircles];
-  
-  for (int i = 0; i < numCircles; i++) {
-    circleX[i] = random(width);
-    circleY[i] = random(height);
-    circleRadius[i] = 20 + i * 20;
-  }
+  centerX = width - 200;
+  centerY = height / 2;
 }
 
 void draw() {
-  for (int i = 0; i < numCircles; i++) {
-    ellipse(circleX[i], circleY[i], circleRadius[i], circleRadius[i]);
+  background(127, 255, 127); 
+  image(img, 0, 0, 400, 400);
+  stroke(circleColor);
+  for (int i = 0; i < 10; i++) {
+    float diameter = map(i, 0, 9, 100, 400) * zoom; // Aumenta el tamaño del elipse con el zoom
+    ellipse(centerX, centerY, diameter, diameter); // Mueve el elipse basado en el zoom
   }
 }
 
-void mousePressed() {
-  // Cambia el tamaño del círculo más cercano al clic del mouse
-  float minDistance = dist(mouseX, mouseY, circleX[0], circleY[0]);
-  int closestCircle = 0;
-  
-  for (int i = 1; i < numCircles; i++) {
-    float d = dist(mouseX, mouseY, circleX[i], circleY[i]);
-    if (d < minDistance) {
-      minDistance = d;
-      closestCircle = i;
-    }
+void keyPressed() {
+  if (key == 'r') {
+    changeCircleColor(255, 0, 0); 
+  } else if (key == 'g') {
+    changeCircleColor(0, 255, 0);
+  } else if (key == 'b') {
+    changeCircleColor(0, 0, 255); 
+  } else if (key == ' ') {
+    resetSketch(); 
+  } else if (key == '+') {
+    zoom += 0.1;
+  } else if (key == '-') {
+    zoom -= 0.1;
   }
-  
- 
-  circleRadius[closestCircle] += 10;
+  zoom = constrain(zoom, 0.5, 2.0);
+}
+
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  zoom += e * 0.05;
+  zoom = constrain(zoom, 0.5, 2.0); 
+}
+
+void mousePressed() {
+  centerX = mouseX;
+  centerY = mouseY;
+}
+
+void mouseMoved() {
+  if (dist(mouseX, mouseY, centerX, centerY) < 200 * zoom) {
+    changeCircleColor(255, 255, 0); // Cambia a amarillo cuando el ratón está sobre los círculos
+  } else {
+    changeCircleColor(255, 0, 0); // Vuelve al color original
+  }
+}
+
+void resetSketch() {
+  changeCircleColor(255, 0, 0); 
+  background(127, 255, 127);
+  img = loadImageWithPath("F_51.jpg"); 
+  zoom = 1.0; 
+  centerX = width - 200;
+  centerY = height / 2;
+}
+
+// Función que NO retorna un valor
+void changeCircleColor(int r, int g, int b) {
+  circleColor = color(r, g, b);
+}
+
+// Función que RETORNA un valor
+PImage loadImageWithPath(String path) {
+  return loadImage(path);
 }
